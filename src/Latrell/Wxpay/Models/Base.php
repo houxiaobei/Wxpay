@@ -109,7 +109,7 @@ class Base
 		ksort($this->values);
 		$string = $this->toUrlParams();
 		//签名步骤二：在string后加入KEY
-		$string = $string . '&key=' . Wxpay::getConfig('key');
+		$string = $string . '&key=' . app('wxpay')->getConfig('key');
 		//签名步骤三：MD5加密
 		$string = md5($string);
 		//签名步骤四：所有字符转为大写

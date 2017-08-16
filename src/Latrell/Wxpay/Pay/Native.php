@@ -61,7 +61,7 @@ class Native
 	 */
 	public function GetPayUrl($input)
 	{
-		if ($input->GetTrade_type() == 'NATIVE') {
+		if ($input->getTradeType() == 'NATIVE') {
 			$result = $this->api->unifiedOrder($input);
 			return $result;
 		}

@@ -61,23 +61,22 @@ class Api
 		if ($input->getTradeType() == 'JSAPI' && ! $input->isOpenidSet()) {
 			throw new WxPayException('统一支付接口中，缺少必填参数openid！trade_type为JSAPI时，openid为必填参数！');
 		}
-		if ($input->getTradeType() == 'NATIVE' && ! $input->isProductIdSet()) {
-			throw new WxPayException('统一支付接口中，缺少必填参数product_id！trade_type为JSAPI时，product_id为必填参数！');
-		}
+//		if ($input->getTradeType() == 'NATIVE' && ! $input->isProductIdSet() ) {
+//			throw new WxPayException('统一支付接口中，缺少必填参数product_id！trade_type为JSAPI时，product_id为必填参数！');
+//		}
 
 		//异步通知url未设置，则使用配置文件中的url
 		if (! $input->isNotifyUrlSet()) {
-			$notify_url = Wxpay::getConfig('notify_url');
+			$notify_url = app('wxpay')->getConfig('notify_url');
 			if (! preg_match('#^https?://#i', $notify_url)) {
 				$notify_url = rtrim(config('app.url'), '/') . '/' . ltrim($notify_url, '/');
 			}
 			$input->setNotifyUrl($notify_url); //异步通知url
 		}
 
-		$input->setAppid(Wxpay::getConfig('appid')); //公众账号ID
-		$input->setMchId(Wxpay::getConfig('mchid')); //商户号
-		$input->setSubMchId(Wxpay::getConfig('sub_mch_id')); //子商户号
-		$input->setSpbillCreateIp($_SERVER['REMOTE_ADDR']); //终端ip
+		$input->setAppid(app('wxpay')->getConfig('appid')); //公众账号ID
+		$input->setMchId(app('wxpay')->getConfig('mchid')); //商户号
+		$input->setSubMchId(app('wxpay')->getConfig('sub_mch_id')); //子商户号
 		//$input->setSpbillCreateIp('1.1.1.1');
 		$input->setNonceStr($this->getNonceStr()); //随机字符串
 
@@ -517,11 +516,11 @@ class Api
 	private function reportCostTime($url, $start_time_stamp, $data)
 	{
 		//如果不需要上报数据
-		if (Wxpay::getConfig('report_levenl') == 0) {
+		if (app('wxpay')->getConfig('report_level') == 0) {
 			return;
 		}
 		//如果仅失败上报
-		if (Wxpay::getConfig('report_levenl') == 1 && array_key_exists('return_code', $data) && $data['return_code'] == 'SUCCESS' && array_key_exists('result_code', $data) && $data['result_code'] == 'SUCCESS') {
+		if (app('wxpay')->getConfig('report_level') == 1 && array_key_exists('return_code', $data) && $data['return_code'] == 'SUCCESS' && array_key_exists('result_code', $data) && $data['result_code'] == 'SUCCESS') {
 			return;
 		}
 
@@ -582,7 +581,7 @@ class Api
 		curl_setopt($ch, CURLOPT_TIMEOUT, $second);
 
 		//如果有配置代理这里就设置代理
-		if (Wxpay::getConfig('curl_proxy_host') != '0.0.0.0' && Wxpay::getConfig('curl_proxy_port') != 0) {
+		if (app('wxpay')->getConfig('curl_proxy_host') != '0.0.0.0' && app('wxpay')->getConfig('curl_proxy_port') != 0) {
 			curl_setopt($ch, CURLOPT_PROXY, Wxpay::getConfig('curl_proxy_host'));
 			curl_setopt($ch, CURLOPT_PROXYPORT, Wxpay::getConfig('curl_proxy_port'));
 		}
