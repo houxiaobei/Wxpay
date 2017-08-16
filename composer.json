@@ -1,6 +1,6 @@
 {
-    "name": "latrell/wxpay",
-    "description": "微信支付SDK在Laravel5封装包。",
+    "name": "houxiaobei/wxpay",
+    "description": "微信支付SDK在Laravel5 & Lumen 封装包。",
     "keywords": ["L5", "Laravel 5", "Laravel", "Wxpay", "Micropay", "Wxpay SDK", "Micropay SDK"],
     "license": "MIT",
     "authors": [
