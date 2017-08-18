@@ -1,6 +1,7 @@
 <?php
 namespace Latrell\Wxpay\Pay;
 
+use Latrell\Wxpay\Models\UnifiedOrder;
 use Latrell\Wxpay\WxpayException;
 use Latrell\Wxpay\Sdk\Api;
 use Latrell\Wxpay\Models\BizPayUrl;
@@ -57,7 +58,7 @@ class Native
 	/**
 	 *
 	 * 生成直接支付url，支付url有效期为2小时,模式二
-	 * @param UnifiedOrderInput $input
+	 * @param UnifiedOrder $input
 	 */
 	public function GetPayUrl($input)
 	{

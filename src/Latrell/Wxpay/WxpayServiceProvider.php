@@ -3,6 +3,8 @@
 namespace Latrell\Wxpay;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Application as LaravelApplication;
+use Laravel\Lumen\Application as LumenApplication;
 
 class WxpayServiceProvider extends ServiceProvider
 {
@@ -12,19 +14,28 @@ class WxpayServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (function_exists('config_path')) {
+        $this->setupConfig();
+    }
+
+    /**
+     * Setup the config.
+     *
+     * @return void
+     */
+    protected function setupConfig()
+    {
+        $source_config = realpath(__DIR__ . '/../../config/config.php');
+        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../../config/config.php' => config_path('latrell-wxpay.php'),
+                $source_config => config_path('latrell-wxpay.php'),
                 __DIR__ . '/../../config/cert/apiclient_cert.pem' => config_path('wxpay/cert/apiclient_cert.pem'),
                 __DIR__ . '/../../config/cert/apiclient_key.pem' => config_path('wxpay/cert/apiclient_key.pem')
-            ], 'config');
-        } else {
-            $this->publishes([
-                __DIR__ . '/../../config/config.php' => base_path('config/latrell-wxpay.php'),
-                __DIR__ . '/../../config/cert/apiclient_cert.pem' => base_path('config/wxpay/cert/apiclient_cert.pem'),
-                __DIR__ . '/../../config/cert/apiclient_key.pem' => base_path('config/wxpay/cert/apiclient_key.pem')
-            ], 'config');
+            ]);
+        } elseif ($this->app instanceof LumenApplication) {
+            $this->app->configure('latrell-wxpay');
         }
+
+        $this->mergeConfigFrom($source_config, 'latrell-wxpay');
     }
 
     /**
